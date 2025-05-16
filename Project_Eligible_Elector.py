@@ -2,7 +2,7 @@
 # Assignment: Eligible Elector
 # Name: Nicholas Hamilton
 # This project is the second assignment in my GEN AI Externship with Cognizant.
-# No AI is used in this project. I have attached the assignment prompt below the code.
+# No AI is used in this project.
 ################################################################################################
 
 def main():
@@ -30,6 +30,5 @@ if __name__ == "__main__":
 
 
 
-####################ASSIGNMENT PROMPT############################################################################
 
 
