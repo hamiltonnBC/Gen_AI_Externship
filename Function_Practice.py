@@ -41,6 +41,13 @@ def add_numbers(num1, num2):
     """
     return num1 + num2
 
+def fibonacci(n):
+    if n <= 1:
+        return n
+    return fibonacci(n - 1) + fibonacci(n - 2)
+
+
+
 def main():
     """
     simple function practice
@@ -65,6 +72,10 @@ def main():
     test_number = 5
     print(f'the factoral of {test_number} is {factorial_function(test_number)}')
 
+    n = 6
+    fibonacci_result = fibonacci(n)
+
+    print(f'the {n}th number is {fibonacci_result}')
 
 
 if __name__ == "__main__":
