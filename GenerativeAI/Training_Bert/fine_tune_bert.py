@@ -144,13 +144,6 @@ def main():
     print(f"Sample true labels:      {predictions_output.label_ids[:10]}")
 
 
-    # --- Guidance for Part 4: Creative Application ---
-    print("\n--- Guidance for Part 4: Creative Application ---")
-    print("This sentiment analysis model is a good starting point.")
-    print("For a creative application, you could adapt this code for:")
-    print("  - Different classification task: e.g., classifying news articles by topic, or customer support tickets by issue type.")
-    print("  - Different dataset: Find a dataset for your chosen task.")
-
 if __name__ == "__main__":
     # Ensure GPU is used if available, for faster training
     device = "cuda" if torch.cuda.is_available() else "cpu"
