@@ -6,156 +6,82 @@
 ################################################################################################
 
 
+
+from openai import OpenAI
+from config import OPENAI_API_KEY
+
+client = OpenAI(api_key=OPENAI_API_KEY)
+
+
 def menu():
-    available_options = {1, 2, 3, 4}
-
+    options = {1, 2, 3}
     while True:
         try:
-            users_desired_action = int(input('What would you like to do? \n'
-                                             '1. Add Expense\n'
-                                             '2. View All Expenses\n'
-                                             '3. View Summary\n'
-                                             '4. Exit\n'
-                                             'Please answer a simple 1, 2, 3, or 4 \n'))
-        except ValueError:
-            print('this was not a number, please try again!\n\n')
-            continue
-        if users_desired_action not in available_options:
-            print('please enter 1, 2, 3, or 4. ')
-            continue
-        else:
-            return users_desired_action
-
-
-def add_category():
-    return input('Please enter the name of your new category: \n')
-
-
-def add_expense(list_of_existing_categories: list, data: dict) -> dict:
-    """
-    Adds an expense to the data dictionary.
-    Users provide a description (str), a category (str), and an amount (float).
-    Data is stored as: {category: [(amount, description), ... etc]}
-    """
-    while True:
-        try:
-            is_new_category_needed = int(input(
-                "Do you need a new category for this expense, or will you be using an existing one?\n1 for new, 2 for existing category.\n"))
-            if is_new_category_needed == 1:
-                new_category = add_category()
-                list_of_existing_categories.append(new_category)
-                print(f'Added new category: {new_category}')
-            elif is_new_category_needed == 2:
-                print('Using existing category.\n')
+            user_choice = int(input("\nWhat would you like to do?\n"
+            "1. Enter a prompt for the AI to complete\n"
+            "2. Change model settings (temperature, max tokens)\n"
+            "3. Exit\n"
+            "Please enter 1, 2, or 3: "))
+            if user_choice in options:
+                return user_choice
             else:
-                print('Invalid input. Please enter 1 or 2.')
-                continue
+                print("Invalid choice. Try again.")
         except ValueError:
-            print('Invalid input. Please enter 1 or 2.')
-            continue
+            print("Invalid input. Please enter a number.")
 
-        category_selection = input(f'Select a category (exactly as shown): {list_of_existing_categories}\n')
-        if category_selection not in list_of_existing_categories:
-            print('Category not found. please try again!\n')
-            continue
+def get_prompt():
+    prompt = input("\nEnter your prompt: ").strip()
+    if not prompt:
+        print("Prompt cannot be empty.")
+        return None
+    return prompt
 
+def get_model_settings():
+    while True:
         try:
-            entry_description = input('Enter the expense description (e.g., Lunch for Food):\n')
-            entry_expense = float(input('Enter the expense amount:\n'))
+            temp = float(input("Set temperature (0.0 to 1.0): "))
+            if not (0.0 <= temp <= 1.0):
+                raise ValueError
+            max_tokens = int(input("Set max tokens (e.g., 50): "))
+            if max_tokens <= 0:
+                raise ValueError
+            return temp, max_tokens
         except ValueError:
-            print('Amount must be a number. Please Try again.\n')
-            continue
+            print("Invalid values. Try again.")
 
-        new_entry = (entry_expense, entry_description)
-        if category_selection not in data:
-            data[category_selection] = []
-        data[category_selection].append(new_entry)
-
-        return data
-
-
-def view_expenses(data):
-    """
-    Displays all expenses in the data dictionary.
-    """
-    if not data:  # in the case that it is currently empty
-        print("No expenses found.")
-        return
-
-    for category, expenses in data.items():
-        print(f"\nCategory: {category}")
-        for expense in expenses:
-            print(f" The amount: {expense[0]}, The description: {expense[1]}")
-
-
-def view_summary(data):
-    """shows the total amount spent per category.
-    """
-    if not data:  # in the case that it is currently empty
-        print("No expenses found.")
-        return
-
-    summary = {}
-    for category, expenses in data.items():
-        total = sum(expense[0] for expense in expenses)
-        summary[category] = total
-
-    print("\nSummary of Expenses by Category:")
-    for category, total in summary.items():
-        print(f"Category: {category}, Total Amount Spent: {total}")
-
+def generate_completion(prompt, temperature, max_tokens):
+    try:
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=temperature,
+            max_tokens=max_tokens
+        )
+        generated_text = response.choices[0].message.content.strip()
+        print(f"\nAI Response:\n{generated_text}")
+    except Exception as e:
+        print(f"Error during API call: {e}")
 
 def main():
-    """
-    Main function to run the Personal Finance Tracker.
-    :return:
-    """
-    print('Welcome to the Personal Finance Tracker!')
-    list_of_existing_categories = ['food', 'housing', 'entertainment']
-    data = {}
+    print("Welcome to the Text Completion App (using OpenAI GPT)!")
+    temperature = 0.7
+    max_tokens = 60
 
     while True:
-        users_desired_action = menu()
+        choice = menu()
 
-        if users_desired_action == 1:
-            add_expense(list_of_existing_categories, data)
-        elif users_desired_action == 2:
-            view_expenses(data)
-        elif users_desired_action == 3:
-            view_summary(data)
-        elif users_desired_action == 4:
+        if choice == 1:
+            prompt = get_prompt()
+            if prompt:
+                generate_completion(prompt, temperature, max_tokens)
+
+        elif choice == 2:
+            temperature, max_tokens = get_model_settings()
+            print(f"Settings updated. Temperature: {temperature}, Max Tokens: {max_tokens}")
+
+        elif choice == 3:
             print("Exiting program.")
             break
 
-    print('Thank you so much for playing!')
-
-
 if __name__ == "__main__":
     main()
-
-## ASSIGNMENT PROMPT ######################
-
-# You will build a command-line Python program that allows users to:
-#
-# Add an expense with a description, category, and amount.
-#
-# View all expenses.
-#
-# View a summary of expenses by category.
-#
-# Handle invalid inputs gracefully using exception handling.
-#
-# Store data in a dictionary (category as key, list of tuples as values).
-#
-# This program simulates a real-world task and tests your ability to organize code into functions and use various Python data structures effectively.
-
-
-
-
-
-
-
-
-
-
-
