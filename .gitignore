@@ -177,3 +177,7 @@ cython_debug/
 .idea
 
 .DS_Store
+
+extracting_legal_documents/
+/extracting_legal_documents/exploring_CSV_Master_Clauses.py
+GenerativeAI/Training_Bert/results_sentiment_analysis/

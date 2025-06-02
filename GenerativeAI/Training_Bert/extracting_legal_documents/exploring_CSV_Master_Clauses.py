@@ -42,7 +42,7 @@ df_final['contract'] = df_final['contract'].str.slice(0, 5000)
 # Load the CUAD annotations CSV
 try:
     cuad_wide_df = pd.read_csv(
-        '/Users/nicholasthamilton/PycharmProjects/Gen_AI_Externship/GenerativeAI/Training_Bert/CUAD_v1/master_clauses.csv')
+        '/GenerativeAI/Training_Bert/extracting_legal_documents/CUAD_v1/master_clauses.csv')
     print("CUAD CSV (wide format) loaded successfully.")
     # --- DEBUG: Print first few filenames from CUAD CSV ---
     print("\nFirst 5 'Filename' entries from CUAD CSV:")
